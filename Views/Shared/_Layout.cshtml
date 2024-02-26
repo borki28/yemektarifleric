@@ -1,0 +1,112 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - yemektarifleric</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <style>
+        button:focus {
+            outline: 0;
+        }
+
+        .navbar .dropdown-menu .form-control {
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">yemektarifleric</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        @{
+                            yemektarifleriDBContext db = new yemektarifleriDBContext();
+                            var ustmenu = db.Menulers.Where(eleman => eleman.UstId == null && eleman.Silindi == false && eleman.Aktif == true).OrderBy(e => e.Sira).ToList();
+                            foreach (var item in ustmenu)
+                            {
+                                var altmenu = db.Menulers.Where(eleman => eleman.UstId == item.MenuId && eleman.Silindi == false && eleman.Aktif == true).OrderBy(e => e.Sira).ToList();
+                                if (altmenu.Count == 0)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link " href="@item.Url">@item.Baslik</a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropDown" @item.MenuId role="button" data-toggle="dropdown" aria-expanded="false">
+                                            @item.Baslik
+                                        </a>
+                                        <div class="dropdown-menu" aria-labelledby="navbarDropDown" @item.MenuId>
+                                            @foreach (var item2 in altmenu)
+                                            {
+                                                <a class="dropdown-item" href="@item2.Url">@item2.Baslik</a>
+                                            }
+
+
+                                        </div>
+                                    </li>
+                                }
+                            }
+
+                        }
+
+                    </ul>
+                    <ul class="nav navbar-nav flex-row justify-content-between ml-auto">
+                        <li class="nav-item order-2 order-md-1"><a href="#" class="nav-link" title="settings"><i class="fa fa-cog fa-fw fa-lg"></i></a></li>
+                       
+                        <li class="dropdown order-1">
+                            <button type="button" id="dropdownMenu1" data-toggle="dropdown" class="btn btn-outline-secondary dropdown-toggle">Giriş Yap <span class="caret"></span></button>
+                            <ul class="dropdown-menu dropdown-menu-right mt-2">
+                                <li class="px-3 py-2">
+                                    <form class="form" role="form">
+                                        <div class="form-group">
+                                            <input id="Eposta" placeholder="Email" class="form-control form-control-sm" type="text" >
+                                        </div>
+                                        <div class="form-group">
+                                            <input id="Parola" placeholder="Parola" class="form-control form-control-sm" type="text" >
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary btn-block">Giris</button>
+                                        </div>
+                                        <div class="form-group text-center">
+                                            <small><a href="#" data-toggle="modal" data-target="#modalPassword">Şifremi Unuttum</a></small>
+                                        </div>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                                       
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2024 - yemektarifleric - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
